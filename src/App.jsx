@@ -6,16 +6,35 @@ import contacts from "./contacts.json"
 
 function App() {
   const[allContacts, setAllContacts]= useState([...contacts])
-  const[removeContacts, setRemoveContacts]=useState()
+  const[orderBy, setOrderBy]= useState()
 
-  function HandleClickRemove(){
-    setRemoveContacts(removeContacts)
-  
-  }
   
   
+  const handleOrderChange = (event) => {
+    setOrderBy(event.target.value);
+  
+
+    
+  if (orderBy === "popularity") {
+    allContacts.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (orderBy === "name") {
+    allContacts.sort((a, b) => (b.popularity-a.popularity))
+
+  };
+  };
+
+  function HandleClickRemove(item){
+ let contactosEliminados = allContacts.filter((a) => a.id !== item.id);
+setAllContacts([...contactosEliminados])
+   
+  }    
+      
   return (
     <div className="App">
+        <button onClick={handleOrderChange} value="name">Alfabeticamente</button>
+        <button onClick={handleOrderChange} value="popularity">popularidad</button>
+        
+     
    <table>
         <thead>
           <th>Picture</th>
@@ -26,14 +45,15 @@ function App() {
           <th>Actions</th>
         </thead>
         <tbody>
-          {allContacts.map(c => (<tr>
-            <td><img style={{ width: 100 }} src={c.pictureUrl} alt={c.name}></img></td>
-            <td>{c.name}</td>
-            <td>{c.popularity.toFixed(2)}</td>
-            <td>{c.wonOscar===true ? "🏆":""}{c.wonOscar}</td>
-            <td>{c.wonEmmy===true ? "🌟":""}{c.wonEmmy}</td>
+          {allContacts.map(item => (
+          <tr key={item.id}>
+            <td><img style={{ width: 100 }} src={item.pictureUrl} alt={item.name}></img></td>
+            <td>{item.name}</td>
+            <td>{item.popularity.toFixed(2)}</td>
+            <td>{item.wonOscar===true ? "🏆":""}{item.wonOscar}</td>
+            <td>{item.wonEmmy===true ? "🌟":""}{item.wonEmmy}</td>
             <td>
-              <button>{HandleClickRemove}Delete</button>
+              <button onClick={() => HandleClickRemove(item)}>Delete</button>
               </td>
           </tr>))}
         </tbody>
